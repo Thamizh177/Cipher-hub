@@ -1,0 +1,120 @@
+<!-- templates/aes.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Encryption - CIPHERHUB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='aesStyle.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AES-256 Encryption</h1>
+        
+        <!-- Text Encryption Section -->
+        <div class="section">
+            <h2>Text Encryption/Decryption</h2>
+            <div class="input-group">
+                <textarea id="inputText" placeholder="Enter text to encrypt..."></textarea>
+                <button onclick="encryptText()">Encrypt</button>
+            </div>
+            <div class="output-group">
+                <textarea id="outputText" readonly></textarea>
+                <button onclick="decryptText()">Decrypt</button>
+            </div>
+        </div>
+
+        <!-- File Encryption Section -->
+        <div class="section">
+            <h2>File Encryption/Decryption</h2>
+            <div class="input-group">
+                <form id="encryptFileForm" action="{{ url_for('aes_encrypt_route') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="inputFile" name="file">
+                    <button type="submit">Encrypt File</button>
+                </form>
+            </div>
+            <div class="output-group">
+                <form id="decryptFileForm" action="{{ url_for('aes_decrypt_route') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="encryptedFile" name="file">
+                    <input type="hidden" id="decryptIv" name="iv" value="{{ session.get('aes_iv', '') }}">
+                    <button type="submit">Decrypt File</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function encryptText() {
+            const text = document.getElementById('inputText').value;
+            try {
+                const response = await fetch('/aes/encrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `text=${encodeURIComponent(text)}`
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('outputText').value = JSON.stringify({
+                        iv: result.iv,
+                        ciphertext: result.ciphertext
+                    });
+                } else {
+                    alert('Encryption failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+
+        async function decryptText() {
+            const encryptedData = document.getElementById('outputText').value;
+            try {
+                const response = await fetch('/aes/decrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `encrypted_data=${encodeURIComponent(encryptedData)}`
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    document.getElementById('inputText').value = result.plaintext;
+                } else {
+                    alert('Decryption failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        }
+
+        // No longer needed as we're using direct form submission for file operations
+        // But keeping them with updated logic for compatibility
+        document.getElementById('encryptFileForm').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('inputFile');
+            if (!fileInput.files[0]) {
+                e.preventDefault();
+                alert('Please select a file');
+            }
+        });
+
+        document.getElementById('decryptFileForm').addEventListener('submit', function(e) {
+            const fileInput = document.getElementById('encryptedFile');
+            if (!fileInput.files[0]) {
+                e.preventDefault();
+                alert('Please select an encrypted file');
+            }
+        });
+
+        // Keep these functions for backward compatibility, but modify them to use the forms
+        function encryptFile() {
+            document.getElementById('encryptFileForm').submit();
+        }
+
+        function decryptFile() {
+            document.getElementById('decryptFileForm').submit();
+        }
+    </script>
+</body>
+</html>

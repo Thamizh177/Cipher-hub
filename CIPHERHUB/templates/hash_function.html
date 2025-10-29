@@ -1,0 +1,73 @@
+<!-- templates/hash_function.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CipherHub - Hash Functions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='hashStyle.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='icon.png') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Hash Function</h1>
+        <div class="nav-buttons">
+            <a href="{{ url_for('home') }}" class="btn">Home</a>
+        </div>
+        
+        <div class="form-container">
+            <form method="POST">
+                <div class="input-group">
+                    <label for="plaintext">Text to Hash:</label>
+                    <textarea id="plaintext" name="plaintext" rows="5" required>{{ plaintext if plaintext else '' }}</textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label for="algorithm">Select Hash Algorithm:</label>
+                    <select id="algorithm" name="algorithm">
+                        <option value="md5" {% if algorithm == 'md5' %}selected{% endif %}>MD5</option>
+                        <option value="sha1" {% if algorithm == 'sha1' %}selected{% endif %}>SHA-1</option>
+                        <option value="sha256" {% if algorithm == 'sha256' %}selected{% endif %}>SHA-256</option>
+                        <option value="sha512" {% if algorithm == 'sha512' %}selected{% endif %}>SHA-512</option>
+                        <option value="sha3_256" {% if algorithm == 'sha3_256' %}selected{% endif %}>SHA3-256</option>
+                        <option value="blake2b" {% if algorithm == 'blake2b' %}selected{% endif %}>BLAKE2b</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">Generate Hash</button>
+            </form>
+        </div>
+        
+        {% if hash_result %}
+        <div class="result-container">
+            <h2>Hash Result</h2>
+            <div class="result">
+                <p><strong>Algorithm:</strong> {{ algorithm.upper() }}</p>
+                <p><strong>Hash:</strong> <span class="hash-output">{{ hash_result }}</span></p>
+                <button class="btn copy-btn" onclick="copyToClipboard()">Copy Hash</button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        function copyToClipboard() {
+            const hashOutput = document.querySelector('.hash-output');
+            const textArea = document.createElement('textarea');
+            textArea.value = hashOutput.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            // Show copied notification
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

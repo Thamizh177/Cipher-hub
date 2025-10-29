@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DES Encryption and Decryption</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='desStyle.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>DES Encryption</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Tabs for switching between encryption and decryption -->
+        <div class="tabs">
+            <button class="tab-btn active" id="encrypt-tab">Encrypt</button>
+            <button class="tab-btn" id="decrypt-tab">Decrypt</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Encryption Tab Content -->
+            <div class="tab-pane active" id="encrypt-pane">
+                <div class="options">
+                    <button class="option-btn active" id="text-encrypt-btn">Text</button>
+                    <button class="option-btn" id="file-encrypt-btn">File</button>
+                </div>
+
+                <!-- Text Encryption -->
+                <div class="option-content active" id="text-encrypt-content">
+                    <form id="text-encrypt-form">
+                        <div class="form-group">
+                            <label for="plaintext">Enter Text to Encrypt:</label>
+                            <textarea id="plaintext" name="plaintext" rows="6" placeholder="Enter your text here..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="encrypt-key">Encryption Key (Optional):</label>
+                            <div class="key-input-group">
+                                <input type="text" id="encrypt-key" name="encrypt-key" placeholder="Leave blank for random key">
+                                <button type="button" class="generate-key" id="generate-encrypt-key">
+                                    <i class="fas fa-key"></i> Generate
+                                </button>
+                            </div>
+                            <small>Key should be 8 bytes (64 bits). If longer, it will be truncated; if shorter, it will be padded.</small>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn primary-btn">Encrypt</button>
+                            <button type="reset" class="btn secondary-btn">Clear</button>
+                        </div>
+                    </form>
+
+                    <div class="result" id="text-encrypt-result">
+                        <h3>Encryption Result</h3>
+                        <div class="result-group">
+                            <label>Key (Hex):</label>
+                            <div class="copy-group">
+                                <input type="text" id="encrypt-result-key" readonly>
+                                <button class="copy-btn" data-target="encrypt-result-key">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <small>Save this key for decryption!</small>
+                        </div>
+                        <div class="result-group">
+                            <label>IV (Base64):</label>
+                            <div class="copy-group">
+                                <input type="text" id="encrypt-result-iv" readonly>
+                                <button class="copy-btn" data-target="encrypt-result-iv">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="result-group">
+                            <label>Ciphertext (Base64):</label>
+                            <div class="copy-group">
+                                <textarea id="encrypt-result-ciphertext" readonly rows="4"></textarea>
+                                <button class="copy-btn" data-target="encrypt-result-ciphertext">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Encryption -->
+                <div class="option-content" id="file-encrypt-content">
+                    <form id="file-encrypt-form">
+                        <div class="form-group">
+                            <label for="encrypt-file">Select File to Encrypt:</label>
+                            <div class="file-input-group">
+                                <input type="file" id="encrypt-file" name="encrypt-file">
+                                <div class="file-info" id="encrypt-file-info">No file selected</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="file-encrypt-key">Encryption Key (Optional):</label>
+                            <div class="key-input-group">
+                                <input type="text" id="file-encrypt-key" name="file-encrypt-key" placeholder="Leave blank for random key">
+                                <button type="button" class="generate-key" id="generate-file-encrypt-key">
+                                    <i class="fas fa-key"></i> Generate
+                                </button>
+                            </div>
+                            <small>Key should be 8 bytes (64 bits). If longer, it will be truncated; if shorter, it will be padded.</small>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn primary-btn">Encrypt File</button>
+                            <button type="reset" class="btn secondary-btn">Clear</button>
+                        </div>
+                    </form>
+
+                    <div class="result" id="file-encrypt-result">
+                        <h3>File Encryption Result</h3>
+                        <div class="result-group">
+                            <label>Key (Hex):</label>
+                            <div class="copy-group">
+                                <input type="text" id="file-encrypt-result-key" readonly>
+                                <button class="copy-btn" data-target="file-encrypt-result-key">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <small>Save this key for decryption!</small>
+                        </div>
+                        <div class="result-group">
+                            <div class="download-group">
+                                <button id="download-encrypted-file" class="btn download-btn">
+                                    <i class="fas fa-download"></i> Download Encrypted File
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decryption Tab Content -->
+            <div class="tab-pane" id="decrypt-pane">
+                <div class="options">
+                    <button class="option-btn active" id="text-decrypt-btn">Text</button>
+                    <button class="option-btn" id="file-decrypt-btn">File</button>
+                </div>
+
+                <!-- Text Decryption -->
+                <div class="option-content active" id="text-decrypt-content">
+                    <form id="text-decrypt-form">
+                        <div class="form-group">
+                            <label for="ciphertext">Ciphertext (Base64):</label>
+                            <textarea id="ciphertext" name="ciphertext" rows="4" placeholder="Enter the encrypted text (Base64)..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="decrypt-iv">IV (Base64):</label>
+                            <input type="text" id="decrypt-iv" name="decrypt-iv" placeholder="Enter the initialization vector...">
+                        </div>
+                        <div class="form-group">
+                            <label for="decrypt-key">Decryption Key (Hex):</label>
+                            <input type="text" id="decrypt-key" name="decrypt-key" placeholder="Enter the key used for encryption...">
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn primary-btn">Decrypt</button>
+                            <button type="reset" class="btn secondary-btn">Clear</button>
+                        </div>
+                    </form>
+
+                    <div class="result" id="text-decrypt-result">
+                        <h3>Decryption Result</h3>
+                        <div class="result-group">
+                            <label>Plaintext:</label>
+                            <div class="copy-group">
+                                <textarea id="decrypt-result-plaintext" readonly rows="6"></textarea>
+                                <button class="copy-btn" data-target="decrypt-result-plaintext">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File Decryption -->
+                <div class="option-content" id="file-decrypt-content">
+                    <form id="file-decrypt-form">
+                        <div class="form-group">
+                            <label for="decrypt-file">Select Encrypted File:</label>
+                            <div class="file-input-group">
+                                <input type="file" id="decrypt-file" name="decrypt-file">
+                                <div class="file-info" id="decrypt-file-info">No file selected</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="file-decrypt-key">Decryption Key (Hex):</label>
+                            <input type="text" id="file-decrypt-key" name="file-decrypt-key" placeholder="Enter the key used for encryption...">
+                        </div>
+                        <div class="form-group">
+                            <label for="output-filename">Output Filename (Optional):</label>
+                            <input type="text" id="output-filename" name="output-filename" placeholder="Leave blank to use original filename">
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn primary-btn">Decrypt File</button>
+                            <button type="reset" class="btn secondary-btn">Clear</button>
+                        </div>
+                    </form>
+
+                    <div class="result" id="file-decrypt-result">
+                        <h3>File Decryption Result</h3>
+                        <div class="result-message" id="file-decrypt-message"></div>
+                        <div class="download-group">
+                            <button id="download-decrypted-file" class="btn download-btn">
+                                <i class="fas fa-download"></i> Download Decrypted File
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 DES Encryption Tool</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            const tabs = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and panes
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding pane
+                    this.classList.add('active');
+                    const targetPane = document.getElementById(this.id.replace('-tab', '-pane'));
+                    targetPane.classList.add('active');
+                });
+            });
+            
+            // Option switching within tabs
+            const optionBtns = document.querySelectorAll('.option-btn');
+            
+            optionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Get parent for context
+                    const parentTabPane = this.closest('.tab-pane');
+                    
+                    // Remove active class from all options in this tab
+                    parentTabPane.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+                    parentTabPane.querySelectorAll('.option-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked option and corresponding content
+                    this.classList.add('active');
+                    const targetContent = document.getElementById(this.id.replace('-btn', '-content'));
+                    targetContent.classList.add('active');
+                });
+            });
+            
+            // Copy buttons
+            const copyBtns = document.querySelectorAll('.copy-btn');
+            
+            copyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetElement = document.getElementById(targetId);
+                    
+                    targetElement.select();
+                    document.execCommand('copy');
+                    
+                    // Visual feedback
+                    const originalIcon = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        this.innerHTML = originalIcon;
+                    }, 1500);
+                });
+            });
+            
+            // Generate key buttons
+            document.getElementById('generate-encrypt-key').addEventListener('click', function() {
+                fetch('/des/generate_key')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('encrypt-key').value = data.key;
+                    });
+            });
+            
+            document.getElementById('generate-file-encrypt-key').addEventListener('click', function() {
+                fetch('/des/generate_key')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('file-encrypt-key').value = data.key;
+                    });
+            });
+            
+            // File input display
+            document.getElementById('encrypt-file').addEventListener('change', function() {
+                const fileInfo = document.getElementById('encrypt-file-info');
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                } else {
+                    fileInfo.textContent = 'No file selected';
+                }
+            });
+            
+            document.getElementById('decrypt-file').addEventListener('change', function() {
+                const fileInfo = document.getElementById('decrypt-file-info');
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                } else {
+                    fileInfo.textContent = 'No file selected';
+                }
+            });
+            
+            // Helper function to format file size
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                else return (bytes / 1048576).toFixed(1) + ' MB';
+            }
+            
+            // Text encryption form
+            document.getElementById('text-encrypt-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const plaintext = document.getElementById('plaintext').value;
+                const key = document.getElementById('encrypt-key').value;
+                
+                const formData = new FormData();
+                formData.append('text', plaintext);
+                if (key) formData.append('key', key);
+                
+                fetch('/des/encrypt_text', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('encrypt-result-key').value = data.key;
+                    document.getElementById('encrypt-result-iv').value = data.iv;
+                    document.getElementById('encrypt-result-ciphertext').value = data.ciphertext;
+                    document.getElementById('text-encrypt-result').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during encryption.');
+                });
+            });
+            
+            // Text decryption form
+            document.getElementById('text-decrypt-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const ciphertext = document.getElementById('ciphertext').value;
+                const iv = document.getElementById('decrypt-iv').value;
+                const key = document.getElementById('decrypt-key').value;
+                
+                const formData = new FormData();
+                formData.append('ciphertext', ciphertext);
+                formData.append('iv', iv);
+                formData.append('key', key);
+                
+                fetch('/des/decrypt_text', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('decrypt-result-plaintext').value = data.plaintext;
+                    document.getElementById('text-decrypt-result').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during decryption.');
+                });
+            });
+            
+            // File encryption form
+            document.getElementById('file-encrypt-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fileInput = document.getElementById('encrypt-file');
+                if (!fileInput.files.length) {
+                    alert('Please select a file to encrypt.');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                const key = document.getElementById('file-encrypt-key').value;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                if (key) formData.append('key', key);
+                
+                fetch('/des/encrypt_file', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('file-encrypt-result-key').value = data.key;
+                    document.getElementById('file-encrypt-result').style.display = 'block';
+                    
+                    // Store file path for download
+                    document.getElementById('download-encrypted-file').setAttribute('data-file', data.output_file);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during file encryption.');
+                });
+            });
+            
+            // File decryption form
+            document.getElementById('file-decrypt-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fileInput = document.getElementById('decrypt-file');
+                if (!fileInput.files.length) {
+                    alert('Please select a file to decrypt.');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                const key = document.getElementById('file-decrypt-key').value;
+                const outputFilename = document.getElementById('output-filename').value;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('key', key);
+                if (outputFilename) formData.append('output_filename', outputFilename);
+                
+                fetch('/des/decrypt_file', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('file-decrypt-message').textContent = data.result;
+                    document.getElementById('file-decrypt-result').style.display = 'block';
+                    
+                    if (data.output_file) {
+                        document.getElementById('download-decrypted-file').style.display = 'block';
+                        document.getElementById('download-decrypted-file').setAttribute('data-file', data.output_file);
+                    } else {
+                        document.getElementById('download-decrypted-file').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during file decryption.');
+                });
+            });
+            
+            // Download buttons
+            document.getElementById('download-encrypted-file').addEventListener('click', function() {
+                const filePath = this.getAttribute('data-file');
+                if (filePath) {
+                    window.location.href = '/des/download?file=' + encodeURIComponent(filePath);
+                }
+            });
+            
+            document.getElementById('download-decrypted-file').addEventListener('click', function() {
+                const filePath = this.getAttribute('data-file');
+                if (filePath) {
+                    window.location.href = '/des/download?file=' + encodeURIComponent(filePath);
+                }
+            });
+            
+            // Initially hide result sections
+            document.querySelectorAll('.result').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.getElementById('download-decrypted-file').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

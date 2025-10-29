@@ -1,0 +1,57 @@
+<!-- templates/morse_code.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Code - CipherHub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='morseStyle.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Morse Code Encoder/Decoder</h1>
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('morse_code') }}">
+                <div class="input-group">
+                    <label for="operation">Select Operation:</label>
+                    <select name="operation" id="operation">
+                        <option value="encrypt">Encrypt (Text to Morse)</option>
+                        <option value="decrypt">Decrypt (Morse to Text)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="message">Enter Message:</label>
+                    <textarea name="message" id="message" rows="5" required>{{ message or '' }}</textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn">Process</button>
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+                </div>
+            </form>
+        </div>
+        
+        {% if result %}
+        <div class="result-container">
+            <h2>Result:</h2>
+            <div class="result">
+                <pre>{{ result }}</pre>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="morse-reference">
+            <h3>Morse Code Reference</h3>
+            <div class="reference-grid">
+                {% for char, code in morse_dict.items() %}
+                <div class="reference-item">
+                    <span class="char">{{ char }}</span>
+                    <span class="code">{{ code }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

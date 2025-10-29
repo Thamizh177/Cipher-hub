@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hill Cipher</title>
+    <link rel="stylesheet" href="/static/hillStyle.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Hill Cipher Tool</h1>
+        
+        <!-- Back Button -->
+        <a href="/home" class="back-button">← Back to Home</a>
+
+        <form method="POST">
+            <label for="text">Enter Text:</label>
+            <input type="text" id="text" name="text" required placeholder="Enter plaintext or ciphertext (A-Z only)" />
+
+            <label for="key_matrix">Enter Key Matrix (comma-separated):</label>
+            <input type="text" id="key_matrix" name="key_matrix" placeholder="e.g., 2,4,5,9 for 2x2 matrix" />
+
+            <label for="operation">Select Operation:</label>
+            <select id="operation" name="operation">
+                <option value="encrypt">Encrypt</option>
+                <option value="decrypt">Decrypt</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if result %}
+            <div class="output">
+                <h2>Result:</h2>
+                <p><strong>Key Matrix:</strong> {{ key_matrix }}</p>
+                <p><strong>Output Text:</strong> {{ result }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

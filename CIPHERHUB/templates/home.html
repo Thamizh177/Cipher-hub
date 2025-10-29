@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='homeStyle.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://sigmawire.net/i/03/sE9b07.png" alt="CIPHERHUB Logo" loading="lazy" width="auto" height="auto">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Algorithm &#x25BC;</a>
+                    <ul class="dropdown">
+                        <li><a href="#rsa">RSA Encryption</a></li>
+                        <li><a href="#quantum">Quantum Encryption</a></li>
+                        <li><a href="#aes">AES Encryption</a></li>
+                        <li><a href="#des">DES Encryption</a></li>
+                        <li><a href="#caesar">Caesar Cipher</a></li>
+                        <li><a href="#hill">Hill Cipher</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">About App</a></li>
+            </ul>
+        </nav>
+        <a href="#" onclick="confirmLogout()"> 
+            <button class="btn">Logout</button>
+        </a>
+    </header>
+    <main>
+        <section class="tools">
+            <div class="parent">
+            
+                <div class="card" id="rsa" onclick="location.href='/rsa';">
+                    <div class="card-details">
+                    <p class="text-title">RSA Encryption</p>
+                    <p class="text-body">A robust method for secure data transmission and digital signatures.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+{#                <div class="card" id="quantum" onclick="location.href='#quantum';">#}
+{#                    <div class="card-details">#}
+{#                    <p class="text-title">Quantum Encryption</p>#}
+{#                    <p class="text-body">The future of encryption, offering unparalleled security using quantum mechanics.</p>#}
+{#                    </div>#}
+{#                    <button class="card-button">More info</button>#}
+{#                </div>#}
+                
+                <div class="card" id="aes" onclick="location.href='/aes';">
+                    <div class="card-details">
+                    <p class="text-title">AES Encryption</p>
+                    <p class="text-body">Advanced Encryption Standard, widely used for secure data encryption.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+                <div class="card" id="des" onclick="location.href='/des';">
+                    <div class="card-details">
+                    <p class="text-title">DES Encryption</p>
+                    <p class="text-body">Data Encryption Standard, a legacy method still in use for certain applications.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+                <div class="card" id="caesar" onclick="location.href='/caesar';">
+                    <div class="card-details">
+                    <p class="text-title">Caesar Cipher Encryption</p>
+                    <p class="text-body">An ancient cipher used by Julius Caesar, a simple shift-based encryption method.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+                <div class="card" id="hill" onclick="location.href='/hill_cipher';">
+                    <div class="card-details">
+                    <p class="text-title">Hill Cipher Encryption</p>
+                    <p class="text-body">A polygraphic substitution cipher that uses linear algebra techniques.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+                <div class="card" id="morse" onclick="location.href='/morse_code';">
+                    <div class="card-details">
+                        <p class="text-title">Morse Code</p>
+                        <p class="text-body">A method of encoding text using sequences of dots and dashes, widely used in telecommunication.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+                <div class="card" id="hash" onclick="location.href='/hash_function';">
+                    <div class="card-details">
+                        <p class="text-title">Hash Code</p>
+                        <p class="text-body">A unique fixed-size representation of data, commonly used in cryptography and data integrity verification.</p>
+                    </div>
+                    <button class="card-button">More info</button>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+    
+    <script>
+    function confirmLogout() {
+        if (confirm("Are you sure you want to log out?")) {
+            window.location.href = "{{ url_for('logout') }}";
+        }
+    }
+    </script>
+    
+</body>
+</html>

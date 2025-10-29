@@ -1,0 +1,95 @@
+<!-- templates/rsa_decrypt.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Decryption - CIPHERHUB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='rsaStyle.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Decryption</h1>
+        
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="{{ url_for('rsa_cipher_route') }}">Encryption</a>
+            <a href="{{ url_for('rsa_decrypt_route') }}" class="active">Decryption</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Text Decryption Section -->
+        <div class="section">
+            <h2>Text Decryption</h2>
+            <form method="POST" action="{{ url_for('rsa_decrypt_route') }}">
+                <div class="form-group">
+                    <label for="encrypted_text">Enter Encrypted Text:</label>
+                    <textarea 
+                        id="encrypted_text" 
+                        name="encrypted_text" 
+                        placeholder="Enter encrypted text to decrypt" 
+                        required
+                    >{% if result and result.encrypted_text %}{{ result.encrypted_text }}{% endif %}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="private_key">Enter Private Key:</label>
+                    <textarea 
+                        id="private_key" 
+                        name="private_key" 
+                        placeholder="Enter your private key" 
+                        required
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn">Decrypt Text</button>
+            </form>
+            
+            {% if result and result.success %}
+                <div class="result success">
+                    <h3>Decrypted Text:</h3>
+                    <textarea readonly class="decrypted-text">{{ result.decrypted_text }}</textarea>
+                    <button onclick="copyToClipboard('decrypted-text')" class="btn-copy">Copy to Clipboard</button>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- File Decryption Section -->
+        <div class="section">
+            <h2>File Decryption</h2>
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('rsa_decrypt_route') }}">
+                <div class="form-group">
+                    <label for="file">Select Encrypted File:</label>
+                    <input type="file" id="file" name="file" required>
+                </div>
+                <div class="form-group">
+                    <label for="file_private_key">Enter Private Key:</label>
+                    <textarea 
+                        id="file_private_key" 
+                        name="private_key" 
+                        placeholder="Enter your private key" 
+                        required
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn">Decrypt File</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(className) {
+            const textarea = document.querySelector('.' + className);
+            textarea.select();
+            document.execCommand('copy');
+            alert('Copied to clipboard!');
+        }
+    </script>
+</body>
+</html>

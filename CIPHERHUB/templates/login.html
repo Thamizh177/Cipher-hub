@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='indexStyle.css') }}">
+    <title>Login and Signup</title>
+</head>
+
+<body>
+    <div class="box">
+        <div class="flip-card-inner">
+            <!-- Login Form -->
+            <div class="box-login">
+                <ul>
+                    <form action="/login" method="post">
+                        <h1>LOGIN</h1>
+                        <div class="input-icon">
+                            <input class="inpt" type="text" name="identifier" placeholder="Email or Phone" required>
+                            <i class="fa fa-user"></i>
+                        </div>
+                        
+
+                        <div class="input-icon">
+                            <input class="inpt" type="password" name="password" placeholder="Password" required>
+                            <i id="eye-login" class="fa fa-eye-slash" onclick="togglePassword('eye-login', 'password')"></i>
+                        </div>
+
+                        <div class="register-link">
+                            <a href="/forgot-password">Forgot Password?</a>
+                        </div>
+
+                        <button type="submit" class="btn">LOGIN</button>
+                    </form>
+                    <div class="register-link">
+                        <p>Don't have an account? <a href="#" onclick="flip()">Sign Up</a></p>
+                    </div>
+                </ul>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="box-signup">
+                <ul>
+                    <form action="/signup" method="post">
+                        <h1>SIGN UP</h1>
+                        <div class="input-icon">
+                            <input class="inpt" type="text" name="name" placeholder="Full Name" required>
+                            <i class="fa fa-user"></i>
+                        </div>
+
+                        <div class="input-icon">
+                            <input class="inpt" type="email" name="email" placeholder="Email" required>
+                            <i class="fa fa-envelope"></i>
+                        </div>
+
+                        <div class="input-icon">
+                            <input class="inpt" type="text" name="phone" placeholder="Phone Number" required>
+                            <i class="fa fa-phone"></i>
+                        </div>
+
+                        <div class="input-icon">
+                            <input class="inpt" type="password" name="password" placeholder="Password" required>
+                            <i id="eye-signup" class="fa fa-eye-slash" onclick="togglePassword('eye-signup', 'password')"></i>
+                        </div>
+
+                        <button type="submit" class="btn">SIGN UP</button>
+                    </form>
+                    <div class="register-link">
+                        <p>Already have an account? <a href="#" onclick="flipBack()">Log In</a></p>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function flip() {
+            document.querySelector('.flip-card-inner').style.transform = 'rotateY(180deg)';
+        }
+
+        function flipBack() {
+            document.querySelector('.flip-card-inner').style.transform = 'rotateY(0deg)';
+        }
+
+        function togglePassword(eyeId, inputType) {
+            const eyeIcon = document.getElementById(eyeId);
+            const inputField = eyeIcon.previousElementSibling;
+
+            if (inputField.type === "password") {
+                inputField.type = "text";
+                eyeIcon.className = "fa fa-eye";
+            } else {
+                inputField.type = "password";
+                eyeIcon.className = "fa fa-eye-slash";
+            }
+        }
+    </script>
+</body>
+
+</html>

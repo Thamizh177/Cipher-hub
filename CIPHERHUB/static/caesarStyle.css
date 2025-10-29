@@ -1,0 +1,95 @@
+/* Body and overall layout */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #4e73df, #1d2b64);
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+/* Centered container with shadow and smooth transition */
+.cipher-container {
+    width: 60%;
+    margin: 100px auto;
+    padding: 40px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Heading style */
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #00f0ff;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Labels and input fields */
+label {
+    font-size: 1.2em;
+    display: block;
+    margin-top: 20px;
+    color: #ffeb3b;
+}
+
+/* Input fields styling */
+input {
+    width: 80%;
+    padding: 15px;
+    margin: 15px 0;
+    font-size: 1.2em;
+    border: 2px solid #00f0ff;
+    border-radius: 10px;
+    background: transparent;
+    color: white;
+    transition: border-color 0.3s ease-in-out;
+}
+
+/* Input focus effect */
+input:focus {
+    border-color: #ffeb3b;
+    outline: none;
+}
+
+/* Buttons styling */
+button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    margin: 15px;
+    border-radius: 10px;
+    background: #ff5722;
+    color: white;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Button hover effect */
+button:hover {
+    background: #ff7043;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Result display */
+h3 {
+    font-size: 1.5em;
+    margin-top: 30px;
+    color: #ffeb3b;
+}
+
+/* Result text styling */
+p {
+    font-size: 1.3em;
+    color: #00f0ff;
+    margin-top: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+}

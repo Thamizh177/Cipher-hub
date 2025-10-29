@@ -1,0 +1,95 @@
+<!-- templates/rsa_cipher.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA Cipher - CIPHERHUB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='rsaStyle.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>RSA Encryption</h1>
+        
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="{{ url_for('rsa_cipher_route') }}" class="active">Encryption</a>
+            <a href="{{ url_for('rsa_decrypt_route') }}">Decryption</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Text Encryption Section -->
+        <div class="section">
+            <h2>Text Encryption</h2>
+            <form method="POST" action="{{ url_for('rsa_cipher_route') }}">
+                <div class="form-group">
+                    <label for="text">Enter Text to Encrypt:</label>
+                    <textarea 
+                        id="text" 
+                        name="text" 
+                        placeholder="Enter text to encrypt" 
+                        required
+                    >{% if result and result.original_text %}{{ result.original_text }}{% endif %}</textarea>
+                </div>
+                <button type="submit" class="btn">Encrypt Text</button>
+            </form>
+            
+            {% if result and result.success %}
+                <div class="result success">
+                    <h3>Encrypted Text:</h3>
+                    <textarea readonly class="encrypted-text">{{ result.encrypted_text }}</textarea>
+                    <button onclick="copyToClipboard('encrypted-text')" class="btn-copy">Copy to Clipboard</button>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- File Encryption Section -->
+        <div class="section">
+            <h2>File Encryption</h2>
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('rsa_cipher_route') }}">
+                <div class="form-group">
+                    <label for="file">Select File to Encrypt:</label>
+                    <input type="file" id="file" name="file" required>
+                </div>
+                <button type="submit" class="btn">Encrypt File</button>
+            </form>
+        </div>
+
+        <!-- Public Key Display -->
+        {% if public_key %}
+        <div class="section">
+            <h2>Public Key</h2>
+            <textarea readonly class="public-key">{{ public_key }}</textarea>
+            <button onclick="copyToClipboard('public-key')" class="btn-copy">Copy Public Key</button>
+        </div>
+        {% endif %}
+
+        <!-- Private Key Display -->
+        {% if private_key %}
+        <div class="section">
+            <h2>Private Key (Save this securely!)</h2>
+            <textarea readonly class="private-key">{{ private_key }}</textarea>
+            <button onclick="copyToClipboard('private-key')" class="btn-copy">Copy Private Key</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard(className) {
+            const textarea = document.querySelector('.' + className);
+            textarea.select();
+            document.execCommand('copy');
+            alert('Copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
